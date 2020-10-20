@@ -1,0 +1,370 @@
+% !TEX program = xelatex
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[czech]{babel}
+\usepackage[top = 1.5cm, bottom = 1.5cm, left = 2cm, right = 2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{letltxmacro}
+\usepackage{bbm}
+
+\usepackage{wrapfig}
+\usepackage{gnuplottex}
+
+\LetLtxMacro{\oldhbar}{\hbar}
+\renewcommand*{\hbar}{{\mathpalette\hbaraux\relax\mathrm{h}}}
+\newcommand*{\hbaraux}[2]{\sbox0{\mathsurround=0pt$#1\mathchar'26$}\mkern-1mu\lower.07\ht0\box0\mkern-8mu}
+
+\def\ph{\phantom}
+\def\vph{\vphantom}
+\def\hph{\hphantom}
+\def\rzw{\mathrlap}
+\def\lzw{\mathllap}
+\def\czw{\mathclap}
+\newcommand*{\mask}[2]{\mathord{\makebox[\widthof{\(#1\)}]{\(#2\)}}}
+
+\newcommand{\comm}[2]{\left[ #1, #2 \right]}
+\newcommand{\const}[1]{\text{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\innerprod}[2]{\big< #1, #2 \big>}
+\newcommand{\mean}[1]{\left< #1 \right>}
+\renewcommand{\d}[1]{\const{d} #1}
+\newcommand{\dd}[2]{\frac{\const{d} #1}{\const{d} #2}}
+\newcommand{\pd}[2]{\frac{\partial  #1}{\partial  #2}}
+\newcommand{\e}[1]{\const{e}^{#1}}
+\renewcommand{\i}{\const{i}}
+\newcommand{\bhat}[1]{\hat{\bm{#1}}}
+\newcommand{\vechat}[1]{\hat{\vec{#1}}}
+\renewcommand{\dot}[1]{\accentset{\bullet}{#1}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\braket}[2]{\left< #1 \middle| #2 \right>}
+\newcommand{\f}{\varphi}
+\newcommand{\Parity}{\hat{\mathcal{P}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\def\Cont{\mathcal{C}}
+\def\Schwartz{\mathcal{S}}
+\def\Fourier{\mathcal{F}}
+\def\Laplace{\mathcal{L}}
+\def\Parity{\mathcal{P}}
+\newcommand{\T}[1]{\mathrm{T}_{#1}}
+\renewcommand{\S}[1]{\mathrm{S}_{#1}}
+\newcommand{\D}[1]{\mathrm{D}^{#1}}
+
+\newcommand{\di}[1]{\mathchar22\mkern-11mu \mathrm{d} #1}
+\newcommand{\Pd}[3]{
+    \vph{\Bigg|}
+    \bigg(
+        \hspace{-2pt}
+        \pd{#1}{#2}
+        \hspace{-2pt}
+    \bigg)_{
+        \hspace{-3pt} #3
+    }
+}
+
+\newcommand{\mat}[1]{
+    \begin{pmatrix}
+        #1
+    \end{pmatrix}
+}
+
+\newcommand{\mata}[2]{
+    \left(
+    \begin{array}{@{}#1@{}}
+        #2
+    \end{array}
+    \right)
+}
+
+\newcommand{\smat}[2][1]{
+    \scalebox{#1}{$\mat{#2}$}
+}
+
+\def\kB{\const{k}_\const{B}}
+
+\begin{document}
+
+\section*{Úkol 1a: van der Waalsův plyn}
+\textbf{Autor: Michal Grňo}
+
+\subsection*{Zadání}
+Ukažte, že stavová rovnice van der Waalsova plynu
+\begin{equation*}
+    p(T, v) = \frac{\kB T}{v-b} - \frac{a}{v^2}
+\end{equation*}
+je nekompatibilní s kalorickou stavovou rovnicí ideálního plynu $u_\const{id.} = c \kB T$ a najděte její opravu ve tvaru
+\begin{align*}
+    u(T, v) = c \kB T + \phi(T, v) \: .
+\end{align*}
+Platí, že $v = V/N$, $u = U/N$.
+
+\subsection*{Řešení}
+\subsubsection*{1. Integrabilita entropie}
+Víme, že obecně platí rovnice:
+\begin{gather*}
+    \d{U} = \di{Q} + \di{W}
+    \\
+    \di{Q} = T \, \d{S}
+\end{gather*}
+Navíc v jednokomponentovém plynu platí:
+\begin{gather*}
+    \di{W} = -p \, \d{V}
+\end{gather*}
+Dosadíme a vyjádříme si $\d{S}$ pomocí diferenciálů $T$ a $V$:
+\begin{align*}
+    \d{U} &= T \, \d{S} - p \, \d{V}
+    \\[5pt]
+    \d{S} &= \frac{1}{T} \, \d{U} + \frac{p}{T} \, \d{V}
+    \\[5pt]
+    \d{S} &= \frac{1}{T} \left( \Pd{U}{T}{V} \d{T} + \Pd{U}{V}{T} \d{V} \right) + \frac{p}{T} \, \d{V}
+    \\[5pt]
+    \d{S} &= \frac{1}{T} \, \Pd{U}{T}{V} \, \d{T} + \frac{1}{T} \left( p + \Pd{U}{V}{T} \right) \, \d{V}
+\end{align*}
+Z pohledu diferenciální geometrie je diferenciál $\d{S}$ kovektorové pole na stavovém prostoru. Abychom se posunuli dál, vyjádříme si jeho jednotlivé složky v souřadnicové bázi dané souřadnicemi $(T, V)$, konkrétně tak, že provedeme jeho kontrakci s bázovými vektory $\partial/\partial T, \; \partial/\partial V$:
+\begin{align*}
+    \pd{}{T} \cdot \d{S}
+    &=
+    \frac{1}{T} \, \Pd{U}{T}{V} \; \underbrace{\pd{}{T} \cdot \d{T}}_{1} \;+\; \frac{1}{T} \left( p + \Pd{U}{V}{T} \right) \; \underbrace{\pd{}{T} \cdot \d{V}}_{0}
+    \qquad \implies \qquad
+    \Pd{S}{T}{V} = \frac{1}{T} \, \Pd{U}{T}{V}
+    \\[8pt]
+    \pd{}{V} \cdot \d{S}
+    &=
+    \frac{1}{T} \, \Pd{U}{T}{V} \; \underbrace{\pd{}{V} \cdot \d{T}}_{0} \;+\; \frac{1}{T} \left( p + \Pd{U}{V}{T} \right) \; \underbrace{\pd{}{V} \cdot \d{V}}_{1}
+    \qquad \implies \qquad
+    \Pd{S}{V}{T} = \frac{1}{T} \left( p + \Pd{U}{V}{T} \right)
+\end{align*}
+Obě rovnice zderivujeme podle zbylé proměnné (tj. $\partial S/\partial T$ zderivujeme podle $V$ a \textit{vice versa}):
+\begin{gather*}
+    \pd{}{V} \; \frac{1}{T} \, \Pd{U}{T}{V}
+    \;=\; \pd{^2 S}{T \, \partial V} \;=\;
+    \pd{}{T} \; \frac{1}{T} \left( p + \Pd{U}{V}{T} \right)
+    \\[5pt]
+    \frac{1}{T} \, \pd{^2 U}{T \, \partial V}
+    =
+    -\frac{1}{T^2} \left( p + \Pd{U}{V}{T} \right)
+    +\frac{1}{T} \left( \Pd{p}{T}{V} + \pd{^2 U}{T \, \partial V} \right)
+\end{gather*}
+\begin{align*}
+    \frac{1}{T^2} \left( p + \Pd{U}{V}{T} \right) &=
+    \frac{1}{T} \, \Pd{p}{T}{V}
+    \\[5pt]
+    p + \Pd{U}{V}{T} &=
+    T \Pd{p}{T}{V}
+    \\[5pt]
+    \Pd{U}{V}{T} &=
+    -p + T \Pd{p}{T}{V}
+\end{align*}
+Tato stavová rovnice je důsledkem integrability entropie v jednokomponentovém plynu (vzpomeňte, z jakých rovnic jsme vyšli). Tato rovnice nám dává závislost mezi $U(T, V)$ a $p(T, V)$, kterou můžeme využít pro vyšetření kompatibility zadaných stavových rovnic.
+
+\subsubsection*{2. Kompatibilita stavových rovnic}
+Nejprve přejdeme od souřadnic $(T, V)$ k souřadnicím $(T, v)$. Taková změna je triviální:
+\begin{align*}
+    \Pd{u}{v}{T} &=
+    -p + T \Pd{p}{T}{v}
+\end{align*}
+Dosadíme-li do rovnice $u_\const{id.}$, dostaneme
+\begin{align*}
+    0 &= \frac{a}{v^2} \: .
+\end{align*}
+Takovou rovnici nejde při konečném tlaku a nenulové hustotě splnit. Dosadíme-li nyní $u = u_\const{id.} + \phi$, dostaneme:
+\begin{gather*}
+    \Pd{\phi}{v}{T} = \frac{a}{v^2}
+    \\[3pt]
+    \phi(T, v) = -\frac{a}{v} + \phi(T)
+\end{gather*}
+Ze zadaného tvaru rovnice vyplývá, že $\phi(T)=0$, kalorická stavová rovnice van der Waalsova plynu je tedy
+\begin{equation*}
+    u(T,v) = c \kB T - \frac{a}{v} \: .
+\end{equation*}
+
+\pagebreak
+
+\section*{Úkol 1b: Ottův cyklus}
+\textbf{Autor: Michal Grňo}
+
+\subsection*{Zadání}
+\vph{.} \vspace{-\baselineskip}
+\begin{wrapfigure}{r}{6cm}
+    \vspace{-5\baselineskip}
+    \centering
+    \begin{gnuplot}[terminal=cairolatex, terminaloptions = {size 5cm, 5cm}]
+    	set xlabel '$V$'
+    	set ylabel '$T$' rotate by 0
+    	
+    	set xrange [0.5:2.5]
+    	set yrange [3.5:8.5]
+    	
+    	set border 3
+    	unset tics
+    	
+    	set label "$A$" at 2.00,3.95 left
+    	set label "$B$" at 0.95,4.85 right
+    	set label "$C$" at 1.00,8.10 right
+    	set label "$D$" at 2.05,6.55 left
+    	
+    	plot '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, [1:2] 5*x**(-0.3) lt 1 lc rgb "black" not, [1:2] 8*x**(-0.3) lt 1 lc rgb "black" not
+    	1 8
+    	1 5
+    	e
+    	2 6.498019170849885
+    	2 4.061261981781178
+    	e
+    \end{gnuplot}
+    \caption{$TV$ diagram Ottova cyklu}
+\end{wrapfigure}
+Ottův cyklus je čtyřfázový cyklus, který se skládá z adiabatického stlačení ($A\to B$), izochorického zahřátí ($B\to C$), adiabatického roztažení (${C\to D}$) a izochorického ochlazení ($D\to A$).
+
+Pracovní látka je ideální plyn se stavovými rovnicemi
+\begin{align*}
+    pV &= nRT & U &= cnRT
+\end{align*}
+Ukažte, že účinnost cyklu je určena pouze kompresním poměrem $\epsilon = \frac{V_A}{V_B}$.
+
+\subsection*{Řešení}
+Pracujeme v jednokomponentovém plynu, proto platí:
+\begin{equation*}
+    \di{W} = -p \, \d{V}
+\end{equation*}
+Účinnost cyklu budeme počítat pomocí vzorce:
+\begin{align*}
+    \eta = 1 - \frac{|Q_\const{out}|}{Q_\const{in}}
+\end{align*}
+
+Ačkoliv nás zajímá celkové teplo a výměna tepla probíhá pouze v izochorické části cyklu, uděláme nejprve \textit{cimrmanovský úkork stranou} a začneme vyjádřením rovnice adiabaty. Adiabata je křivka $\varphi: t \mapsto (T,V)$, podél které je diferenciál tepla nulový, tedy $\di{Q}_\varphi = 0$. Použitím známých rovnic dostaneme:
+\begin{gather*}
+    \d{U}_\varphi = \di{Q}_\varphi + \di{W}_\varphi
+    \\
+    \Bigg[
+    \quad
+    \d{U} = \Pd{U}{T}{V} \d{T} = cnR \; \d{T}
+    \qquad
+    \di{Q}_\varphi = 0
+    \qquad
+    \di{W} = -p \, \d{V}
+    \qquad
+    p = \frac{nRT}{V}
+    \quad
+    \Bigg]
+\end{gather*}
+\begin{align*}
+    cnR \; \d{T}_\varphi &= - \frac{nRT}{V} \; \d{V}_\varphi
+    \\[10pt]
+    -c \; \frac{ \d{T}_\varphi }{T} &= \frac{ \d{V}_\varphi }{V}
+    \qquad\quad /\int \! \d{t}
+    \\[10pt]
+    -c \; \ln T &= \ln V + K
+    \\[10pt]
+    \varphi: \; V &= K \, T^{-c}
+    \\
+\end{align*}
+
+Nyní, když známe rovnici adiabaty, můžeme ze znalosti hodnot $T_A, V_A, V_B$ vyvodit hodnotu $T_B$:
+\begin{align*}
+    V_A &= K_{AB} \, T_A^{\,-c}
+    \implies
+    K_{AB} = V_A \, T_A^{\;c}
+    \\[3pt]
+    V_B &= K_{AB} \, T_B^{\,-c}
+    \implies
+    T_B^{\,-c} = V_B \, {K_{AB}}^{\!\!-1}
+    = \underbrace{V_A \, V_B^{\,-1}}_\epsilon \; T_A^{\,-c}
+\end{align*}
+\vspace{-1em}
+\begin{equation*}
+    T_B = \epsilon^{-1/c} \; T_A
+\end{equation*}
+S využitím vědomosti, že $V_A=V_D$ a $V_B=V_C$ můžeme tentýž postup použít pro výpočet $T_C$ z $T_D$:
+\begin{equation*}
+    T_C = \epsilon^{-1/c} \; T_D
+\end{equation*}
+
+\pagebreak
+
+Nyní se budeme zabývat izochorou – tuto křivku si označíme $\chi$ a platí pro ni:
+\begin{gather*}
+    \d{V}_\chi = 0
+    \\
+    \Bigg[
+    \quad
+    \di{W}_\chi = -p \; \d{V}_\chi = 0
+    \qquad
+    \di{Q} + \di{W}
+    = \d{U}
+    = cnR \; \d{T}
+    \quad
+    \Bigg]
+    \\[10pt]
+    \di{Q}_\chi = cnR \; \d{T}_\chi
+\end{gather*}
+\begin{align*}
+    Q_\const{in}
+    &= \int_B^C \di{Q}_\chi
+    = \int_{T_B}^{T_C} cnR \; \d{T}_\chi
+    = cnR \, (T_C - T_B)
+    \\[5pt]
+    Q_\const{out}
+    &= \int_{D}^{A} \di{Q}_\chi
+    = \int_{T_D}^{T_A} cnR \; \d{T}_\chi
+    = cnR \, (T_A - T_D)
+\end{align*}
+\begin{gather*}
+    \eta = 1 - \frac{|Q_\const{out}|}{Q_\const{in}}
+    = 1 - \frac{T_D - T_A}{T_C - T_B}
+    = 1 - \epsilon^{1/c}
+\end{gather*}
+Dokázali jsme tedy, že účinnost stroje je závislá pouze na poměru objemů $\epsilon = \frac{V_A}{V_B}$. Tento výsledek je poměrně zřejmý i z grafu Ottova cyklu – teplo se totiž předává pouze při izochorickém procesu a předané teplo je přímo úměrné rozdílu teploty. V grafu je dobře vidět, že čím větší je poměr objemů, tím větší je teplotní rozdíl mezi ději $B\to C$ a $D\to A$.
+\\\\
+
+
+\centering
+\begin{gnuplot}[terminal=cairolatex, terminaloptions = {size 18cm, 10cm}]
+	set xlabel '$V$'
+	set ylabel '$T$' rotate by 0
+	
+	set xrange [0:3]
+	set yrange [3.5:11]
+	
+	set border 3
+	unset tics
+	
+	f(x) = 5*x**(-0.3)
+	g(x) = 8*x**(-0.3)
+	
+	plot '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, '-' w l lt 1 lc rgb "black" not, [1:1.4] f(x) lt 1 lc rgb "black" not, [1:1.4] g(x) lt 1 lc rgb "black" not, [0.4:0.8] f(x) lt 1 lc rgb "black" not, [0.4:0.8] g(x) lt 1 lc rgb "black" not, [1.6:2] f(x) lt 1 lc rgb "black" not, [1.6:2] g(x) lt 1 lc rgb "black" not, [2.2:2.6] f(x) lt 1 lc rgb "black" not, [2.2:2.6] g(x) lt 1 lc rgb "black" not, [0.1:10] f(x) dt 0 lc rgb "black" not, [0.1:10] g(x) dt 0 lc rgb "black" not
+	0.4 6.581911021671187
+	0.4 10.5310576346739
+	e
+	0.8 5.34617299995594
+	0.8 8.553876799929505
+	e
+	1 8
+	1 5
+	e
+	1.4 4.519928799729046
+	1.4 7.231886079566474
+	e
+	1.6 4.342441830549217
+	1.6 6.947906928878747
+	e
+	2 6.498019170849885
+	2 4.061261981781178
+	e
+	2.2 3.9467825564610926
+	2.2 6.314852090337748
+	e
+	2.6 3.753859380652631
+	2.6 6.00617500904421
+	e
+\end{gnuplot}
+
+
+
+\end{document}
